@@ -27,6 +27,7 @@
  *          'opacity' int 0-100
  *          'color' string hex-color #000000-#ffffff
  *          'grayscale' bool
+ *          'negate' bool
  *          'crop' bool
  * @param $single boolean, if false then an array of data will be returned
  * @return string|array containing the url of the resized modofied image
@@ -103,6 +104,21 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
             return $this->image->modulateImage(100,0,100);
         } catch (Exception $e) {
             return new WP_Error( 'image_grayscale_error', $e->getMessage() );
+        }
+    }
+    
+    /** Negates the image
+     *
+     * @supports 3.5.1
+     * @access public
+     *
+     * @return boolean|WP_Error
+     */
+    public function negate() {
+        try {
+            return $this->image->negateImage(false);
+        } catch (Exception $e) {
+            return new WP_Error( 'image_negate_error', $e->getMessage() );
         }
     }
 }
@@ -252,6 +268,22 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         }
         return new WP_Error( 'image_grayscale_error', __('Image grayscale failed.'), $this->file );
     }
+    
+    /** Negates the image
+     *
+     * @supports 3.5.1
+     * @access public
+     *
+     * @return boolean|WP_Error
+     */
+    public function negate() {
+        if (function_exists('imagefilter')) {
+            if (imagefilter($this->image, IMG_FILTER_NEGATE)) {
+                return true;
+            }
+        }
+        return new WP_Error( 'image_negate_error', __('Image negate failed.'), $this->file );
+    }
 }
 
 
@@ -270,6 +302,7 @@ class BFI_Thumb {
      *          'color' string hex-color #000000-#ffffff
      *          'grayscale' bool
      *          'crop' bool
+     *          'negate' bool
      * @param $single boolean, if false then an array of data will be returned
      * @return string|array
      */
@@ -335,7 +368,8 @@ class BFI_Thumb {
             (isset($opacity) ? str_pad((string)$opacity, 3, '0', STR_PAD_LEFT) : '100') .
             (isset($color) ? str_pad(preg_replace('#^\##', '', $color), 8, '0', STR_PAD_LEFT) : '00000000') .
             (isset($grayscale) ? ($grayscale ? '1' : '0') : '0') .
-            (isset($crop) ? ($crop ? '1' : '0') : '0');
+            (isset($crop) ? ($crop ? '1' : '0') : '0') .
+            (isset($negate) ? ($negate ? '1' : '0') : '0');
         $suffix = self::base_convert_arbitrary($suffix, 10, 36);
 
     	// use this to check if cropped image already exists, so we can return that instead
@@ -363,6 +397,14 @@ class BFI_Thumb {
     	        if ( is_wp_error( $editor->resize( $width, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
     	            return false;
                 }
+    	    }
+
+            if ( isset( $negate ) ) {
+    	        if ( $negate ) {
+        	        if ( is_wp_error( $editor->negate() ) ) {
+        	            return false;
+        	        }
+    	        }
     	    }
 
     	    if ( isset( $opacity ) ) {
