@@ -80,3 +80,12 @@ bfi_thumb("URL-to-image.jpg", $params);
 License
 =======
 GPL 3.0
+
+It's not required but I appreciate if you attribute and/or link back if you find this helpful :)
+
+<hr>
+
+Social Stuff
+============
+
+Twitter: (@bfintal)[https://twitter.com/bfintal] & (@gambitph)[https://twitter.com/gambitph]
