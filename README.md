@@ -93,4 +93,4 @@ It's not required but I appreciate if you attribute and/or link back if you find
 Social Stuff
 ============
 
-Twitter: (@bfintal)[https://twitter.com/bfintal] & (@gambitph)[https://twitter.com/gambitph]
+Twitter: [@bfintal](https://twitter.com/bfintal) & [@gambitph](https://twitter.com/gambitph)
