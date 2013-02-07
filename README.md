@@ -7,6 +7,7 @@ Bfi_thumb resizes image on the fly using WordPress' Image Editor classes, thus s
 * Grayscale
 * Color (colorize)
 * Opacity
+* Negate
 
 Bfi_thumb stores previously created images in WP's default uploads directory, and uses those for future calls. The script automatically checks for updates on the original image then re-creates new images when needed. Any image can be used as long it is in your WordPress instance.
 
@@ -70,7 +71,11 @@ bfi_thumb("URL-to-image.jpg", $params);
 $params = {'color' => '#ff0000'};
 bfi_thumb("URL-to-image.jpg", $params);
 
-// All together
+// Negate
+$params = {'negate' => true};
+bfi_thumb("URL-to-image.jpg", $params);
+
+// Multiple parameters
 $params = {'width' => 400, 'height' => 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000'};
 bfi_thumb("URL-to-image.jpg", $params);
 ```
