@@ -349,7 +349,8 @@ class BFI_Thumb {
     	$img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
 
     	// if file exists, just return it
-        if (!file_exists($destfilename) && !getimagesize($destfilename)) {	    
+        if (file_exists($destfilename) && getimagesize($destfilename)) {
+        } else {
     	    // perform resizing and other filters
     	    $editor = wp_get_image_editor($img_path);
 
