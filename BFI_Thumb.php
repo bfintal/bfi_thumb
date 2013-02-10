@@ -240,13 +240,17 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
      * @return boolean|WP_Error
      */
     public function colorize($hexColor) {
-        if (function_exists('imagefilter')) {
+        if (function_exists('imagefilter') && 
+            function_exists('imagesavealpha') &&
+            function_exists('imagealphablending')) {
             $hexColor = preg_replace('#^\##', '', $hexColor);
             $r = hexdec (substr ($hexColor, 0, 2));
             $g = hexdec (substr ($hexColor, 2, 2));
             $b = hexdec (substr ($hexColor, 2, 2));
-        
-            if (imagefilter($this->image, IMG_FILTER_COLORIZE, $r, $g, $b)) {
+            
+            imagealphablending( $this->image, false );
+            if (imagefilter($this->image, IMG_FILTER_COLORIZE, $r, $g, $b, 0)) {
+                imagesavealpha($this->image, true);
                 return true;
             }
         }
