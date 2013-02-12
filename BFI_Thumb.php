@@ -488,3 +488,34 @@ class BFI_Thumb {
         return $result;
     }   
 }
+
+// don't use the default resizer since we want to allow resizing to larger sizes (than the original one)
+// Parts are copied from media.php
+// Crop is always applied (just like timthumb)
+add_filter('image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5);
+function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false) {
+	$aspect_ratio = $orig_w / $orig_h;
+	
+    $new_w = $dest_w;
+    $new_h = $dest_h;
+
+	if ( !$new_w ) {
+		$new_w = intval($new_h * $aspect_ratio);
+	}
+
+	if ( !$new_h ) {
+		$new_h = intval($new_w / $aspect_ratio);
+	}
+
+	$size_ratio = max($new_w / $orig_w, $new_h / $orig_h);
+
+	$crop_w = round($new_w / $size_ratio);
+	$crop_h = round($new_h / $size_ratio);
+	$s_x = floor( ($orig_w - $crop_w) / 2 );
+	$s_y = floor( ($orig_h - $crop_h) / 2 );
+
+	// the return array matches the parameters to imagecopyresampled()
+	// int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
+	return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
+	
+}
