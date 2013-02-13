@@ -13,12 +13,18 @@
     <title>BFI Thumb by bfintal</title>
     <style>
     .inner {
-        width: 720px;
+        width: 800px;
+    }
+    h2 {
+        color: #d5000d;
     }
     </style>
   </head>
 
   <body>
+      <a href="https://github.com/bfintal/bfi_thumb">
+                  <img src="https://s3.amazonaws.com/github/ribbons/forkme_left_red_aa0000.png" alt="Fork me on Github" style="position: absolute; top: 0px; left: 0px; border: 0px;">
+              </a>
     <div id="container">
       <div class="inner">
 
@@ -30,13 +36,17 @@
         <section id="downloads" class="clearfix">
           <a href="https://github.com/bfintal/bfi_thumb/zipball/master" id="download-zip" class="button"><span>Download .zip</span></a>
           <a href="https://github.com/bfintal/bfi_thumb/tarball/master" id="download-tar-gz" class="button"><span>Download .tar.gz</span></a>
-          <a href="https://github.com/bfintal/bfi_thumb" id="view-on-github" class="button"><span>Fork on GitHub</span></a>
+          
+          <iframe src="http://ghbtns.com/github-btn.html?user=bfintal&repo=BFI_Thumb&type=fork&size=large&count=true"
+            allowtransparency="true" frameborder="0" scrolling="0" width="150" height="40" style="float: right; padding-top: 9px;"></iframe>
+            <iframe src="http://ghbtns.com/github-btn.html?user=bfintal&repo=BFI_Thumb&type=watch&size=large&count=true"
+              allowtransparency="true" frameborder="0" scrolling="0" width="150" height="40" style="float: right; padding-top: 9px;"></iframe>
         </section>
 
         <hr>
-
+<br>
         <section id="main_content">
-            <h3>How do I use it? (Usage)</h3>
+            <h2>How do I use it? (Usage)</h2>
                 <br>
                   <h5><strong>1.</strong> Download the script (click link above)</h5>
                   <br>
@@ -45,7 +55,7 @@
                         <p><pre><span style="color: rgb(74, 202, 74);">require_once('BFI_Thumb.php');</span></pre></p>
                     <h5><strong>3.</strong> Call bfi_thumb on your image and get your new URL</h5>
                     <p><pre><span style="color: rgb(74, 202, 74);">$params = { 'width' => 400 };</span>
-$image = <span style="color: rgb(74, 202, 74);">bfi_thumb( "http://mysite.com/myimage.jpg", $params )</span>;
+<span style="color: rgb(74, 202, 74);">$image = bfi_thumb( "http://mysite.com/myimage.jpg", $params )</span>;
 echo "&lt;img src='$image'/>";</pre>
 <p>The above outputs:</p>
 <pre><span style="color: rgb(255, 255, 179);">&lt;img src='http://mysite.com/wp-content/uploads/myimage-2tj674icu8n8deljokf2tm.jpg'/></span></pre>
@@ -55,16 +65,16 @@ echo "&lt;img src='$image'/>";</pre>
                   <br>
             
             
-            <h3>What is BFI Thumb?</h3>
+            <h2>What is BFI Thumb?</h2>
             <p>BFI Thumb is a small PHP script that you include in your WordPress theme or plugin then gives you the ability to <strong>resize-crop</strong> and apply <strong>filters on-the-fly</strong> to your images with a simple PHP function call.</p>
             <hr>
             <br>
-            <h3>Why do you need this?</h3>
+            <h2>Why do you need this?</h2>
             <p><em>Aqua Resizer is awesome, WP's Image Editor is awesome, Timthumb is awesome.</em></p><p>But when WP reached 3.5 and introduced the Image Editor class, as a theme author I couldn't anymore use Timthumb in my WP themes. An alternative was to use Aqua Resizer instead. Although it did the job quite well, I needed some of the functionalities supported by Timthumb.. I needed to be allowed to grayscale and color tint images and resizing them at the same time. I couldn't find anything that did everything I wanted, so I made BFI_Thumb.</p>
             <p><strong></strong></p>
             <hr>
             <br>
-            <h3>Okay.. so what does BFI Thumb do?</h3>
+            <h2>Okay.. so what does BFI Thumb do?</h2>
             <p><ul>
             <li>Replacement for Timthumb and other third-party image resizers</li>
             <li>Processes on-the-fly</li>
@@ -88,7 +98,7 @@ echo "&lt;img src='$image'/>";</pre>
             <hr>
             <br>
           
-              <h3>Advanced Usage</h3>
+              <h2>Advanced Usage</h2>
               <pre><span style='color: gray'>// Resize by width only</span>
 <span style="color: rgb(74, 202, 74);">$params = {'width' => 400};</span>
 bfi_thumb("http://mysite.com/myimage.jpg", $params);
@@ -124,12 +134,12 @@ bfi_thumb("http://mysite.com/myimage.jpg", $params);
 bfi_thumb("http://mysite.com/myimage.jpg", $params);</pre>
 
 <hr><br>
-<h3>Where are the images stored?</h3>
+<h2>Where are the images stored?</h2>
 <p>Processed images are stored in your WordPress instance's <strong>uploads</strong> directory. Images typically look like:</p>
 <p><code>wp-content/uploads/imagefilename-a6bo4u5enilq2h5wq8lc0.jpg</code></p>
 <p>A hash is appended to the end of the filename, this hash represents the resize dimensions, filters applied to the image as well as the modified date of the source image. This means that correct processed image is always fetched for future <em>bfi_thumb</em> calls. An added benefit is that when the source image is updated, the hash changes, thus prompting the script to process it again.</p>
 <hr><br>
-<h3>Author</h3>
+<h2>Author</h2>
 
 <p>BFI Thumb is created by <a href="https://github.com/bfintal" class="user-mention">@bfintal</a>.</p>
 
