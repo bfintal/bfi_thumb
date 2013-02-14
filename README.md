@@ -16,6 +16,13 @@ The code was inspired by the awesome [Aqua Resizer](https://github.com/sy4mil/Aq
 
 <hr>
 
+Demo
+====
+
+My theme here uses BFI Thumb to generate all it's images: [MaS WP Theme](http://themeforest.net/item/mas-multilingual-responsive-multipurpose-theme/full_screen_preview/3978788?ref=bfintal)
+
+<hr>
+
 Why Make a New One?
 ===================
 
