@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer
+ * bfi_thumb - WP Image Resizer v1.1
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -313,59 +313,54 @@ class BFI_Thumb {
     public static function thumb($url, $params = array(), $single = true) {
         extract($params);
 
-    	//validate inputs
-    	if(!$url) return false;
+        //validate inputs
+        if(!$url) return false;
 
-    	//define upload path & dir
-    	$upload_info = wp_upload_dir();
-    	$upload_dir = $upload_info['basedir'];
-    	$upload_url = $upload_info['baseurl'];
+        //define upload path & dir
+        $upload_info = wp_upload_dir();
+        $upload_dir = $upload_info['basedir'];
+        $upload_url = $upload_info['baseurl'];
+        $theme_url = get_template_directory_uri();
+        $theme_dir = get_template_directory();
 
-        // find the path of the image
-        // This method has been tried and tested across my themes
-        $img_path = '';
-        $newsrc = $url;
-        while (stripos($newsrc, '/') !== false) {
-            $parts = explode ('/', $_SERVER['SCRIPT_FILENAME']);
-            $path = '';
-            foreach ($parts as $part) {
-                $path .= '/' . $part;
-                if (file_exists ($path . '/' . $newsrc)) {
-                    $img_path = $path . '/' .$newsrc;
-                    break;
-                }
-            }
-            if ($img_path) break;
-            $newsrc = substr($newsrc, stripos($newsrc, '/') + 1);
+        // find the path of the image. Perform 2 checks:
+        // #1 check if the image is in the uploads folder
+        if(strpos( $url, $upload_url ) !== false) {
+            $rel_path = str_replace( $upload_url, '', $url);
+            $img_path = $upload_dir . $rel_path;
+
+        // #2 check if the image is in the current theme folder
+        } else if (strpos($url, $theme_url) !== false) {
+            $rel_path = str_replace( $theme_url, '', $url);
+            $img_path = $theme_dir . $rel_path;
         }
-        $imagePath = preg_replace('#//#', '/', $img_path);
 
         // Fail if we can't find the image in our WP local directory
         if (!$img_path) return $url;
 
-    	//check if img path exists, and is an image indeed
-    	if( !file_exists($img_path) OR !getimagesize($img_path) ) return $url;
+        //check if img path exists, and is an image indeed
+        if( !@file_exists($img_path) OR !getimagesize($img_path) ) return $url;
 
-    	// This is the filename
-    	$basename = basename($img_path);
+        // This is the filename
+        $basename = basename($img_path);
 
-    	//get image info
-    	$info = pathinfo($img_path);
-    	$ext = $info['extension'];
-    	list($orig_w,$orig_h) = getimagesize($img_path);
+        //get image info
+        $info = pathinfo($img_path);
+        $ext = $info['extension'];
+        list($orig_w,$orig_h) = getimagesize($img_path);
 
         // The only purpose of this is to detemine the final width and height
         // without performing any actual image manipulation, which will be used
         // to check whether a resize was previously done.
         if (isset($width)) {
-        	//get image size after cropping
-        	$dims = image_resize_dimensions($orig_w, $orig_h, $width, isset($height) ? $height : null, isset($crop) ? $crop : false);
-        	$dst_w = $dims[4];
-        	$dst_h = $dims[5];
-    	}
+            //get image size after cropping
+            $dims = image_resize_dimensions($orig_w, $orig_h, $width, isset($height) ? $height : null, isset($crop) ? $crop : false);
+            $dst_w = $dims[4];
+            $dst_h = $dims[5];
+        }
 
-    	// create the suffix for the saved file
-    	// we can use this to check whether we need to create a new file or just use an existing one.
+        // create the suffix for the saved file
+        // we can use this to check whether we need to create a new file or just use an existing one.
         $suffix = (string)filemtime($img_path) .
             (isset($dst_w) ? str_pad((string)$dst_w, 5, '0', STR_PAD_LEFT) : str_pad((string)$orig_w, 5, '0', STR_PAD_LEFT)) .
             (isset($dst_h) ? str_pad((string)$dst_h, 5, '0', STR_PAD_LEFT) : str_pad((string)$orig_h, 5, '0', STR_PAD_LEFT)) .
@@ -376,79 +371,79 @@ class BFI_Thumb {
             (isset($negate) ? ($negate ? '1' : '0') : '0');
         $suffix = self::base_convert_arbitrary($suffix, 10, 36);
 
-    	// use this to check if cropped image already exists, so we can return that instead
-    	$dst_rel_path = str_replace( '.'.$ext, '', basename($img_path));
+        // use this to check if cropped image already exists, so we can return that instead
+        $dst_rel_path = str_replace( '.'.$ext, '', basename($img_path));
 
-    	// If opacity is set, change the image type to png
-    	if (isset($opacity)) $ext = 'png';
+        // If opacity is set, change the image type to png
+        if (isset($opacity)) $ext = 'png';
 
-    	// desination paths and urls
-    	$destfilename = "{$upload_dir}/{$dst_rel_path}-{$suffix}.{$ext}";
-    	$img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
+        // desination paths and urls
+        $destfilename = "{$upload_dir}/{$dst_rel_path}-{$suffix}.{$ext}";
+        $img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
 
-    	// if file exists, just return it
-        if (file_exists($destfilename) && getimagesize($destfilename)) {
+        // if file exists, just return it
+        if (@file_exists($destfilename) && getimagesize($destfilename)) {
         } else {
-    	    // perform resizing and other filters
-    	    $editor = wp_get_image_editor($img_path);
+            // perform resizing and other filters
+            $editor = wp_get_image_editor($img_path);
 
-    	    if (is_wp_error( $editor )) return false;
+            if (is_wp_error( $editor )) return false;
 
-    	    /*
-    	     * Perform image manipulations
-    	     */
-    	    if ( isset( $width ) || isset( $height ) ) {
-    	        if ( is_wp_error( $editor->resize( $width, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
-    	            return false;
+            /*
+             * Perform image manipulations
+             */
+            if ( isset( $width ) || isset( $height ) ) {
+                if ( is_wp_error( $editor->resize( $width, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
+                    return false;
                 }
-    	    }
+            }
 
             if ( isset( $negate ) ) {
-    	        if ( $negate ) {
-        	        if ( is_wp_error( $editor->negate() ) ) {
-        	            return false;
-        	        }
-    	        }
-    	    }
+                if ( $negate ) {
+                    if ( is_wp_error( $editor->negate() ) ) {
+                        return false;
+                    }
+                }
+            }
 
-    	    if ( isset( $opacity ) ) {
-    	        if ( is_wp_error( $editor->opacity( $opacity ) ) ) {
-    	            return false;
-    	        }
-    	    }
+            if ( isset( $opacity ) ) {
+                if ( is_wp_error( $editor->opacity( $opacity ) ) ) {
+                    return false;
+                }
+            }
 
-    	    if ( isset( $grayscale ) ) {
-    	        if ( $grayscale ) {
-        	        if ( is_wp_error( $editor->grayscale() ) ) {
-        	            return false;
-        	        }
-    	        }
-    	    }
+            if ( isset( $grayscale ) ) {
+                if ( $grayscale ) {
+                    if ( is_wp_error( $editor->grayscale() ) ) {
+                        return false;
+                    }
+                }
+            }
 
-    	    if ( isset( $color ) ) {
-    	        if ( is_wp_error( $editor->colorize( $color ) ) ) {
-    	            return false;
-    	        }
-    	    }
+            if ( isset( $color ) ) {
+                if ( is_wp_error( $editor->colorize( $color ) ) ) {
+                    return false;
+                }
+            }
 
-    	    // save our new image
-    	    $mime_type = isset( $opacity ) ? 'image/png' : null;
+            // save our new image
+            $mime_type = isset( $opacity ) ? 'image/png' : null;
             $resized_file = $editor->save($destfilename, $mime_type);
-    	}
+        }
 
-    	//return the output
-    	if($single) {
-    		$image = $img_url;
-    	} else {
-    		//array return
-    		$image = array (
-    			0 => $img_url,
-    			1 => isset($dst_w) ? $dst_w : $orig_w,
-    			2 => isset($dst_h) ? $dst_h : $orig_h,
-    		);
-    	}
+        //return the output
+        if($single) {
+            $image = $img_url;
+        } else {
+            //array return
+            $image = array (
+                0 => $img_url,
+                1 => isset($dst_w) ? $dst_w : $orig_w,
+                2 => isset($dst_h) ? $dst_h : $orig_h,
+            );
+        }
 
-    	return $image;
+        return $image;
     }
 
     /** Shortens a number into a base 36 string
@@ -494,28 +489,28 @@ class BFI_Thumb {
 // Crop is always applied (just like timthumb)
 add_filter('image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5);
 function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false) {
-	$aspect_ratio = $orig_w / $orig_h;
-	
+    $aspect_ratio = $orig_w / $orig_h;
+    
     $new_w = $dest_w;
     $new_h = $dest_h;
 
-	if ( !$new_w ) {
-		$new_w = intval($new_h * $aspect_ratio);
-	}
+    if ( !$new_w ) {
+        $new_w = intval($new_h * $aspect_ratio);
+    }
 
-	if ( !$new_h ) {
-		$new_h = intval($new_w / $aspect_ratio);
-	}
+    if ( !$new_h ) {
+        $new_h = intval($new_w / $aspect_ratio);
+    }
 
-	$size_ratio = max($new_w / $orig_w, $new_h / $orig_h);
+    $size_ratio = max($new_w / $orig_w, $new_h / $orig_h);
 
-	$crop_w = round($new_w / $size_ratio);
-	$crop_h = round($new_h / $size_ratio);
-	$s_x = floor( ($orig_w - $crop_w) / 2 );
-	$s_y = floor( ($orig_h - $crop_h) / 2 );
+    $crop_w = round($new_w / $size_ratio);
+    $crop_h = round($new_h / $size_ratio);
+    $s_x = floor( ($orig_w - $crop_w) / 2 );
+    $s_y = floor( ($orig_h - $crop_h) / 2 );
 
-	// the return array matches the parameters to imagecopyresampled()
-	// int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
-	return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
-	
+    // the return array matches the parameters to imagecopyresampled()
+    // int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
+    return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
+    
 }
