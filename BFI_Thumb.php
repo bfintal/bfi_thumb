@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer v1.1
+ * bfi_thumb - WP Image Resizer v1.1.1
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -392,7 +392,7 @@ class BFI_Thumb {
             /*
              * Perform image manipulations
              */
-            if ( isset( $width ) || isset( $height ) ) {
+            if ( ( isset( $width ) && $width ) || ( isset( $height ) && $height ) ) {
                 if ( is_wp_error( $editor->resize( $width, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
                     return false;
                 }
