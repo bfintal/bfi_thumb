@@ -348,7 +348,20 @@ class BFI_Thumb {
         $info = pathinfo($img_path);
         $ext = $info['extension'];
         list($orig_w,$orig_h) = getimagesize($img_path);
-
+        
+        // support percentage dimensions. compute percentage based on
+        // the original dimensions
+        if (isset($width)) {
+            if (stripos($width, '%') !== false) {
+                $width = (int)((float)str_replace('%', '', $width) / 100 * $orig_w);
+            }
+        }
+        if (isset($height)) {
+            if (stripos($height, '%') !== false) {
+                $height = (int)((float)str_replace('%', '', $height) / 100 * $orig_h);
+            }
+        }
+        
         // The only purpose of this is to detemine the final width and height
         // without performing any actual image manipulation, which will be used
         // to check whether a resize was previously done.
@@ -362,8 +375,8 @@ class BFI_Thumb {
         // create the suffix for the saved file
         // we can use this to check whether we need to create a new file or just use an existing one.
         $suffix = (string)filemtime($img_path) .
-            (isset($dst_w) ? str_pad((string)$dst_w, 5, '0', STR_PAD_LEFT) : str_pad((string)$orig_w, 5, '0', STR_PAD_LEFT)) .
-            (isset($dst_h) ? str_pad((string)$dst_h, 5, '0', STR_PAD_LEFT) : str_pad((string)$orig_h, 5, '0', STR_PAD_LEFT)) .
+            (isset($width) ? str_pad((string)$width, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($height) ? str_pad((string)$height, 5, '0', STR_PAD_LEFT) : '00000') .
             (isset($opacity) ? str_pad((string)$opacity, 3, '0', STR_PAD_LEFT) : '100') .
             (isset($color) ? str_pad(preg_replace('#^\##', '', $color), 8, '0', STR_PAD_LEFT) : '00000000') .
             (isset($grayscale) ? ($grayscale ? '1' : '0') : '0') .
