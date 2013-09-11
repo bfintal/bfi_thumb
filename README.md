@@ -19,7 +19,10 @@ The code was inspired by the awesome [Aqua Resizer](https://github.com/sy4mil/Aq
 Demo
 ====
 
-My theme here uses BFI Thumb to generate all it's images: [MaS WP Theme](http://themeforest.net/item/mas-multilingual-responsive-multipurpose-theme/full_screen_preview/3978788?ref=bfintal)
+My themes usee BFI Thumb to generate all it's images:
+* [MaS WP Theme](http://themeforest.net/item/mas-multilingual-responsive-multipurpose-theme/full_screen_preview/3978788?ref=bfintal)
+* [Amplus WP Theme](http://themeforest.net/item/amplus-responsive-multilingual-wordpress-theme/full_screen_preview/180353?ref=bfintal)
+* [Dimension WP Theme](http://themeforest.net/item/dimension-retina-responsive-multipurpose-theme/full_screen_preview/5495659?ref=bfintal)
 
 <hr>
 
