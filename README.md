@@ -1,7 +1,7 @@
 bfi_thumb
 =========
 
-On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress
+On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress 3.5+
 
 Bfi_thumb resizes image on the fly using WordPress' Image Editor classes, thus supports both Imagick and GD and switches automatically depending on what's available. The default Image Editors only have a handful of basic functions (crop, resize, rotate, etc), bfi_thumb also extends these classes to include these new functions:
 * Grayscale
