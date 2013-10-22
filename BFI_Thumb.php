@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer v1.1.1
+ * bfi_thumb - WP Image Resizer v1.1.2
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -48,6 +48,22 @@ function bfi_wp_image_editor($editorArray) {
 require_once ABSPATH . WPINC . '/class-wp-image-editor.php';
 require_once ABSPATH . WPINC . '/class-wp-image-editor-imagick.php';
 require_once ABSPATH . WPINC . '/class-wp-image-editor-gd.php';
+
+
+/**
+ * check for ImageMagick or GD
+ */
+add_action('admin_init', 'bfi_wp_image_editor_check');
+function bfi_wp_image_editor_check() {
+    $arg = array('mime_type' => 'image/jpeg');
+    if (wp_image_editor_supports($arg) !== true) {
+        add_filter('admin_notices', 'bfi_wp_image_editor_check_notice');
+    }
+}
+function bfi_wp_image_editor_check_notice() {
+    printf("<div class='error'><p>%s</div>", 
+        __("The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.", "default"));
+}
 
 
 /*
