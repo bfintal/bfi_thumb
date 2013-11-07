@@ -66,8 +66,6 @@ bfi_thumb("URL-to-image.jpg", $params);
 $params = {'width' => 400, 'height' => 300};
 bfi_thumb("URL-to-image.jpg", $params);
 
-// You can't resize by height alone
-
 // Crop
 $params = {'width' => 400, 'height' => 300, 'crop' => true};
 bfi_thumb("URL-to-image.jpg", $params);
