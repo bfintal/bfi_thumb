@@ -352,7 +352,7 @@ class BFI_Thumb {
         }
 
         // Fail if we can't find the image in our WP local directory
-        if (!$img_path) return $url;
+        if ( empty( $img_path ) ) return $url;
 
         //check if img path exists, and is an image indeed
         if( !@file_exists($img_path) OR !getimagesize($img_path) ) return $url;
