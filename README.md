@@ -49,7 +49,7 @@ require_once('BFI_Thumb.php');
 2. Call the function to get the image URL
 
 ```php
-$params = { 'width' => 400 };
+$params = array( 'width' => 400 );
 echo "<img src='" . bfi_thumb( "URL-to-image.jpg", $params ) . "'/>";
 ```
     
@@ -59,36 +59,36 @@ Examples:
 
 ```php
 // Resize by width only
-$params = {'width' => 400};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'width' => 400 );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Resize by width and height
-$params = {'width' => 400, 'height' => 300};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'width' => 400, 'height' => 300 );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Crop
-$params = {'width' => 400, 'height' => 300, 'crop' => true};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'width' => 400, 'height' => 300, 'crop' => true );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Change opacity (makes your image into a PNG)
-$params = {'opacity' => 80}; // 80% opaque
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'opacity' => 80 ); // 80% opaque
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Grayscale
-$params = {'grayscale' => true};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'grayscale' => true );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Colorize
-$params = {'color' => '#ff0000'};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'color' => '#ff0000' );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Negate
-$params = {'negate' => true};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'negate' => true );
+bfi_thumb( "URL-to-image.jpg", $params );
 
 // Multiple parameters
-$params = {'width' => 400, 'height' => 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000'};
-bfi_thumb("URL-to-image.jpg", $params);
+$params = array( 'width' => 400, 'height' => 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000' );
+bfi_thumb( "URL-to-image.jpg", $params );
 ```
 
 <hr>
