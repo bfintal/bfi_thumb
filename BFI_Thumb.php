@@ -170,7 +170,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
                 return true;
             }
         }
-        return new WP_Error( 'image_rotate_error', __('Image rotate failed.'), $this->file );
+        return new WP_Error( 'image_rotate_error', __('Image rotate failed.', 'default'), $this->file );
     }
     
     /** Changes the opacity of the image
@@ -192,7 +192,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
             return true;
         }
 
-        return new WP_Error( 'image_opacity_error', __('Image opacity change failed.'), $this->file );
+        return new WP_Error( 'image_opacity_error', __('Image opacity change failed.', 'default'), $this->file );
     }
     
     // from: http://php.net/manual/en/function.imagefilter.php
@@ -270,7 +270,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
                 return true;
             }
         }
-        return new WP_Error( 'image_colorize_error', __('Image color change failed.'), $this->file );
+        return new WP_Error( 'image_colorize_error', __('Image color change failed.', 'default'), $this->file );
     }
     
     /** Makes the image grayscale
@@ -286,7 +286,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
                 return true;
             }
         }
-        return new WP_Error( 'image_grayscale_error', __('Image grayscale failed.'), $this->file );
+        return new WP_Error( 'image_grayscale_error', __('Image grayscale failed.', 'default'), $this->file );
     }
     
     /** Negates the image
@@ -302,7 +302,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
                 return true;
             }
         }
-        return new WP_Error( 'image_negate_error', __('Image negate failed.'), $this->file );
+        return new WP_Error( 'image_negate_error', __('Image negate failed.', 'default'), $this->file );
     }
 }
 
@@ -422,7 +422,7 @@ class BFI_Thumb {
              * Perform image manipulations
              */
             if ( ( isset( $width ) && $width ) || ( isset( $height ) && $height ) ) {
-                if ( is_wp_error( $editor->resize( $width, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
+                if ( is_wp_error( $editor->resize( isset( $width ) ? $width : null, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
                     return false;
                 }
             }
