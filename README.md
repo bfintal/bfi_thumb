@@ -14,8 +14,6 @@ Bfi_thumb resizes image on the fly using WordPress' Image Editor classes, thus s
 * Negate
 * Resize images down or UP
 
-Bfi_thumb stores previously created images in WP's default uploads directory, and uses those for future calls. The script automatically checks for updates on the original image then re-creates new images when needed. Any image can be used as long it is in your WordPress instance.
-
 The code was inspired by the awesome [Aqua Resizer](https://github.com/sy4mil/Aqua-Resizer/blob/master/aq_resizer.php)
 
 Where do I use this?
@@ -32,6 +30,18 @@ My themes usee BFI Thumb to generate all it's images:
 * [Amplus WP Theme](http://themeforest.net/item/amplus-responsive-multilingual-wordpress-theme/full_screen_preview/180353?ref=bfintal)
 * [Dimension WP Theme](http://themeforest.net/item/dimension-retina-responsive-multipurpose-theme/full_screen_preview/5495659?ref=bfintal)
 
+
+Where are the images stored?
+============================
+
+Bfi_thumb stores previously created images in WP's default uploads directory in the subdirectory `bfi_thumb`, and uses those for future calls. The script automatically checks for updates on the original image then re-creates new images when needed. Any image can be used as long it is in your WordPress instance. Remote images are not supported due to security concerns.
+
+You can change the location of where the images are saved by defining this constant anywhere in your code:
+
+```
+// Change the upload subdirectory to wp-content/uploads/other_dir
+@define( BFITHUMB_UPLOAD_DIR, 'other_dir' );
+```
 
 Why Make a New One?
 ===================
