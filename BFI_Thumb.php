@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer v1.1.2
+ * bfi_thumb - WP Image Resizer v1.2
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -32,17 +32,65 @@
  * @param $single boolean, if false then an array of data will be returned
  * @return string|array containing the url of the resized modofied image
  */
+if ( !function_exists( 'bfi_thumb' ) ) {
 function bfi_thumb($url, $params = array(), $single = true) {
-    return BFI_Thumb::thumb($url, $params, $single);
+    $class = BFI_Class_Factory::getNewestVersion( 'BFI_Thumb' );
+    return $class::thumb( $url, $params, $single );
+}
 }
 
 
-// Change the default image editors
+/**
+ * Class factory, this is to make sure that when multiple bfi_thumb scripts
+ * are used (e.g. a plugin and a theme both use it), we always use the
+ * latest version.
+ */
+if ( !class_exists( 'BFI_Class_Factory' ) ) {
+class BFI_Class_Factory {
+    public static $versions = array();
+    public static $latestClass = array();
+
+    public static function addClassVersion( $baseClassName, $className, $version ) {
+        if ( empty( self::$versions[$baseClassName] ) ) {
+            self::$versions[$baseClassName] = array();
+        }
+        self::$versions[$baseClassName][] = array(
+            'class' => $className,
+            'version' => $version
+        );
+    }
+
+    public static function getNewestVersion( $baseClassName ) {
+        if ( empty( self::$latestClass[$baseClassName] ) ) {
+            usort( self::$versions[$baseClassName], array( __CLASS__, "versionCompare" ) );
+            self::$latestClass[$baseClassName] = self::$versions[$baseClassName][0]['class'];
+            unset( self::$versions[$baseClassName] );
+        }
+        return self::$latestClass[$baseClassName];
+    }
+
+    public static function versionCompare( $a, $b ) {
+        return version_compare( $a['version'], $b['version'] ) == 1 ? -1 : 1;
+    }
+}
+}
+
+
+
+/*
+ * Change the default image editors
+ */
 add_filter('wp_image_editors', 'bfi_wp_image_editor');
 
 // Instead of using the default image editors, use our extended ones
+if ( !function_exists( 'bfi_wp_image_editor' ) ) {
 function bfi_wp_image_editor($editorArray) {
-    return array('BFI_Image_Editor_GD', 'BFI_Image_Editor_Imagick');
+    // Make sure that we use the latest versions
+    return array(
+        BFI_Class_Factory::getNewestVersion( 'BFI_Image_Editor_GD' ),
+        BFI_Class_Factory::getNewestVersion( 'BFI_Image_Editor_Imagick' ),
+    );
+}
 }
 
 require_once ABSPATH . WPINC . '/class-wp-image-editor.php';
@@ -50,27 +98,35 @@ require_once ABSPATH . WPINC . '/class-wp-image-editor-imagick.php';
 require_once ABSPATH . WPINC . '/class-wp-image-editor-gd.php';
 
 
+
 /**
  * check for ImageMagick or GD
  */
 add_action('admin_init', 'bfi_wp_image_editor_check');
+if ( !function_exists( 'bfi_wp_image_editor_check' ) ) {
 function bfi_wp_image_editor_check() {
     $arg = array('mime_type' => 'image/jpeg');
     if (wp_image_editor_supports($arg) !== true) {
         add_filter('admin_notices', 'bfi_wp_image_editor_check_notice');
     }
 }
+}
+if ( !function_exists( 'bfi_wp_image_editor_check_notice' ) ) {
 function bfi_wp_image_editor_check_notice() {
-    printf("<div class='error'><p>%s</div>", 
+    printf("<div class='error'><p>%s</div>",
         __("The server does not have ImageMagick or GD installed and/or enabled! Any of these libraries are required for WordPress to be able to resize images. Please contact your server administrator to enable this before continuing.", "default"));
+}
 }
 
 
 /*
  * Enhanced Imagemagick Image Editor
  */
-class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
-    
+if ( !class_exists( 'BFI_Image_Editor_Imagick_1_2' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_Imagick', 'BFI_Image_Editor_Imagick_1_2', '1.2' );
+
+class BFI_Image_Editor_Imagick_1_2 extends WP_Image_Editor_Imagick {
+
     /** Changes the opacity of the image
      *
      * @supports 3.5.1
@@ -81,7 +137,7 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
      */
     public function opacity($opacity) {
         $opacity /= 100;
-    
+
         try {
             // From: http://stackoverflow.com/questions/3538851/php-imagick-setimageopacity-destroys-transparency-and-does-nothing
             // preserves transparency
@@ -91,7 +147,7 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
             return new WP_Error( 'image_opacity_error', $e->getMessage() );
         }
     }
-    
+
     /** Tints the image a different color
      *
      * @supports 3.5.1
@@ -107,7 +163,7 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
             return new WP_Error( 'image_colorize_error', $e->getMessage() );
         }
     }
-    
+
     /** Makes the image grayscale
      *
      * @supports 3.5.1
@@ -122,7 +178,7 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
             return new WP_Error( 'image_grayscale_error', $e->getMessage() );
         }
     }
-    
+
     /** Negates the image
      *
      * @supports 3.5.1
@@ -138,13 +194,16 @@ class BFI_Image_Editor_Imagick extends WP_Image_Editor_Imagick {
         }
     }
 }
-
+}
 
 
 /*
  * Enhanced GD Image Editor
  */
-class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
+if ( !class_exists( 'BFI_Image_Editor_GD_1_2' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_GD', 'BFI_Image_Editor_GD_1_2', '1.2' );
+
+class BFI_Image_Editor_GD_1_2 extends WP_Image_Editor_GD {
     /** Rotates current image counter-clockwise by $angle.
      * Ported from image-edit.php
      * Added presevation of alpha channels
@@ -158,11 +217,11 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
     public function rotate( $angle ) {
         if ( function_exists('imagerotate') ) {
             $rotated = imagerotate( $this->image, $angle, 0 );
-            
+
             // Add alpha blending
-            imagealphablending($rotated, true); 
+            imagealphablending($rotated, true);
             imagesavealpha($rotated, true);
-            
+
             if ( is_resource( $rotated ) ) {
                 imagedestroy( $this->image );
                 $this->image = $rotated;
@@ -172,7 +231,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         }
         return new WP_Error( 'image_rotate_error', __('Image rotate failed.', 'default'), $this->file );
     }
-    
+
     /** Changes the opacity of the image
      *
      * @supports 3.5.1
@@ -183,9 +242,9 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
      */
     public function opacity($opacity) {
         $opacity /= 100;
-        
+
         $filtered = $this->_opacity($this->image, $opacity);
-        
+
         if (is_resource($filtered)) {
             // imagedestroy($this->image);
             $this->image = $filtered;
@@ -194,7 +253,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
 
         return new WP_Error( 'image_opacity_error', __('Image opacity change failed.', 'default'), $this->file );
     }
-    
+
     // from: http://php.net/manual/en/function.imagefilter.php
     // params: image resource id, opacity (eg. 0.0-1.0)
     protected function _opacity($image, $opacity) {
@@ -215,7 +274,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         for ($x = 0; $x < $w; $x++) {
             for ($y = 0; $y < $h; $y++) {
                 $alpha = (imagecolorat($image, $x, $y) >> 24 ) & 0xFF;
-                if( $alpha < $minalpha ) { 
+                if( $alpha < $minalpha ) {
                     $minalpha = $alpha;
                 }
             }
@@ -236,17 +295,17 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
                 //get the color index with new alpha
                 $alphacolorxy = imagecolorallocatealpha( $image, ( $colorxy >> 16 ) & 0xFF, ( $colorxy >> 8 ) & 0xFF, $colorxy & 0xFF, $alpha );
                 //set pixel with the new color + opacity
-                if(!imagesetpixel($image, $x, $y, $alphacolorxy)) { 
-                    return false; 
+                if(!imagesetpixel($image, $x, $y, $alphacolorxy)) {
+                    return false;
                 }
             }
         }
-        
+
         imagesavealpha($image, true);
-        
+
         return $image;
     }
-    
+
     /** Tints the image a different color
      *
      * @supports 3.5.1
@@ -256,14 +315,14 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
      * @return boolean|WP_Error
      */
     public function colorize($hexColor) {
-        if (function_exists('imagefilter') && 
+        if (function_exists('imagefilter') &&
             function_exists('imagesavealpha') &&
             function_exists('imagealphablending')) {
             $hexColor = preg_replace('#^\##', '', $hexColor);
             $r = hexdec (substr ($hexColor, 0, 2));
             $g = hexdec (substr ($hexColor, 2, 2));
             $b = hexdec (substr ($hexColor, 2, 2));
-            
+
             imagealphablending( $this->image, false );
             if (imagefilter($this->image, IMG_FILTER_COLORIZE, $r, $g, $b, 0)) {
                 imagesavealpha($this->image, true);
@@ -272,7 +331,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         }
         return new WP_Error( 'image_colorize_error', __('Image color change failed.', 'default'), $this->file );
     }
-    
+
     /** Makes the image grayscale
      *
      * @supports 3.5.1
@@ -288,7 +347,7 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         }
         return new WP_Error( 'image_grayscale_error', __('Image grayscale failed.', 'default'), $this->file );
     }
-    
+
     /** Negates the image
      *
      * @supports 3.5.1
@@ -305,12 +364,16 @@ class BFI_Image_Editor_GD extends WP_Image_Editor_GD {
         return new WP_Error( 'image_negate_error', __('Image negate failed.', 'default'), $this->file );
     }
 }
+}
 
 
+/*
+ * Main Class
+ */
+if ( !class_exists( 'BFI_Thumb_1_2' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Thumb', 'BFI_Thumb_1_2', '1.2' );
 
-
-
-class BFI_Thumb {
+class BFI_Thumb_1_2 {
     /** Uses WP's Image Editor Class to resize and filter images
      * Inspired by: https://github.com/sy4mil/Aqua-Resizer/blob/master/aq_resizer.php
      *
@@ -364,7 +427,7 @@ class BFI_Thumb {
         $info = pathinfo($img_path);
         $ext = $info['extension'];
         list($orig_w,$orig_h) = getimagesize($img_path);
-        
+
         // support percentage dimensions. compute percentage based on
         // the original dimensions
         if (isset($width)) {
@@ -377,7 +440,7 @@ class BFI_Thumb {
                 $height = (int)((float)str_replace('%', '', $height) / 100 * $orig_h);
             }
         }
-        
+
         // The only purpose of this is to detemine the final width and height
         // without performing any actual image manipulation, which will be used
         // to check whether a resize was previously done.
@@ -510,16 +573,19 @@ class BFI_Thumb {
         }
         while ($newlen != 0);
         return $result;
-    }   
+    }
 }
+}
+
 
 // don't use the default resizer since we want to allow resizing to larger sizes (than the original one)
 // Parts are copied from media.php
 // Crop is always applied (just like timthumb)
 add_filter('image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5);
+if ( !function_exists( 'bfi_image_resize_dimensions' ) ) {
 function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false) {
     $aspect_ratio = $orig_w / $orig_h;
-    
+
     $new_w = $dest_w;
     $new_h = $dest_h;
 
@@ -541,5 +607,5 @@ function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_
     // the return array matches the parameters to imagecopyresampled()
     // int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
     return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
-    
+}
 }
