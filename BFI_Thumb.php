@@ -469,6 +469,21 @@ class BFI_Thumb_1_2 {
         // If opacity is set, change the image type to png
         if (isset($opacity)) $ext = 'png';
 
+
+        // Create the upload subdirectory, this is where
+        // we store all our generated images
+        if ( defined( 'BFITHUMB_UPLOAD_DIR' ) ) {
+            $upload_dir .= "/" . BFITHUMB_UPLOAD_DIR;
+            $upload_url .= "/" . BFITHUMB_UPLOAD_DIR;
+        } else {
+            $upload_dir .= "/bfi_thumb";
+            $upload_url .= "/bfi_thumb";
+        }
+        if ( !is_dir( $upload_dir ) ) {
+            wp_mkdir_p( $upload_dir );
+        }
+
+
         // desination paths and urls
         $destfilename = "{$upload_dir}/{$dst_rel_path}-{$suffix}.{$ext}";
         $img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
