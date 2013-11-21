@@ -3,6 +3,8 @@ bfi_thumb
 
 On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress
 
+*You can read the tutorial and get more information about BFI_Thumb from this article: [Moving Away From TimThumb to BFIThumb](http://wp.tutsplus.com/tutorials/theme-development/moving-away-from-timthumb-to-bfithumb/)*
+
 **Supports WordPress 3.5+**
 
 Bfi_thumb resizes image on the fly using WordPress' Image Editor classes, thus supports both Imagick and GD and switches automatically depending on what's available. The default Image Editors only have a handful of basic functions (crop, resize, rotate, etc), bfi_thumb also extends these classes to include these new functions:
@@ -16,7 +18,11 @@ Bfi_thumb stores previously created images in WP's default uploads directory, an
 
 The code was inspired by the awesome [Aqua Resizer](https://github.com/sy4mil/Aqua-Resizer/blob/master/aq_resizer.php)
 
-<hr>
+Where do I use this?
+====================
+
+You can use this script in your WordPress themes or plugins. The script is safe to be included multiple times in a single WordPress site by different plugins and themes. When multiple versions of BFI_Thumb are found within a site, the newest version will be used.
+
 
 Demo
 ====
@@ -26,7 +32,6 @@ My themes usee BFI Thumb to generate all it's images:
 * [Amplus WP Theme](http://themeforest.net/item/amplus-responsive-multilingual-wordpress-theme/full_screen_preview/180353?ref=bfintal)
 * [Dimension WP Theme](http://themeforest.net/item/dimension-retina-responsive-multipurpose-theme/full_screen_preview/5495659?ref=bfintal)
 
-<hr>
 
 Why Make a New One?
 ===================
@@ -35,7 +40,6 @@ Aqua Resizer is awesome, WP's Image Editor is awesome, Timthumb is awesome.
 
 When WP reached 3.5 and introduced the Image Editor class, as a theme author I couldn't anymore use Timthumb in my WP themes. An alternative was to use Aqua Resizer instead. Although it did the job quite well, I needed some of the functionalities supported by Timthumb.. I needed to be allowed to grayscale, color tint images and change the opacity of images all while resizing them. I couldn't find anything that did everything I wanted, so I made BFI_Thumb.
 
-<hr>
 
 Usage
 =====
@@ -99,7 +103,6 @@ GPL 3.0
 
 It's not required but I appreciate if you attribute and/or link back if you find this helpful :)
 
-<hr>
 
 Social Stuff
 ============
