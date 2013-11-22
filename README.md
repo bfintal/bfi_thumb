@@ -1,5 +1,5 @@
-bfi_thumb
-=========
+bfi_thumb v1.2
+==============
 
 On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress
 
@@ -20,6 +20,8 @@ Where do I use this?
 ====================
 
 You can use this script in your WordPress themes or plugins. The script is safe to be included multiple times in a single WordPress site by different plugins and themes. When multiple versions of BFI_Thumb are found within a site, the newest version will be used.
+
+This means that if you use bfi_thumb in your WordPress theme, and some plugins you also have activated use bfi_thumb, they would all work without any problems.
 
 
 Demo
