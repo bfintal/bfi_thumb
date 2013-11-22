@@ -46,6 +46,11 @@
         <hr>
 <br>
         <section id="main_content">
+            <h2>Where do I use this?</h2>
+            <br>
+            <p></p>You can use this script in your WordPress themes or plugins. The script is safe to be included multiple times in a single WordPress site by different plugins and themes. When multiple versions of BFI_Thumb are found within a site, the newest version will be used.</p>
+
+<p></p>This means that if you use bfi_thumb in your WordPress theme, and some plugins you also have activated use bfi_thumb, they would all work without any problems.</p>
             <h2>How do I use it? (Usage)</h2>
                 <br>
                   <h5><strong>1.</strong> Download the script (click link above)</h5>
@@ -54,7 +59,7 @@
                         <p><em>Your functions.php file is a good place for this</em></p>
                         <p><pre><span style="color: rgb(74, 202, 74);">require_once('BFI_Thumb.php');</span></pre></p>
                     <h5><strong>3.</strong> Call bfi_thumb on your image and get your new URL</h5>
-                    <p><pre><span style="color: rgb(74, 202, 74);">$params = { 'width' => 400 };</span>
+                    <p><pre><span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400 );</span>
 <span style="color: rgb(74, 202, 74);">$image = bfi_thumb( "http://mysite.com/myimage.jpg", $params )</span>;
 echo "&lt;img src='$image'/>";</pre>
 <p>The above outputs:</p>
@@ -100,44 +105,47 @@ echo "&lt;img src='$image'/>";</pre>
           
               <h2>Advanced Usage</h2>
               <pre><span style='color: gray'>// Resize by width only</span>
-<span style="color: rgb(74, 202, 74);">$params = {'width' => 400};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400 );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Resize by width and height</span>
-<span style="color: rgb(74, 202, 74);">$params = {'width' => 400, 'height' => 300};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400, 'height' => 300 );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// You can't resize by height alone</span>
 
 <span style='color: gray'>// Crop</span>
-<span style="color: rgb(74, 202, 74);">$params = {'width' => 400, 'height' => 300, 'crop' => true};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400, 'height' => 300, 'crop' => true );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Change opacity (makes your image into a PNG)</span>
-<span style="color: rgb(74, 202, 74);">$params = {'opacity' => 80};</span> <span style='color: gray'>// 80% opaque</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'opacity' => 80 );</span> <span style='color: gray'>// 80% opaque</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Grayscale</span>
-<span style="color: rgb(74, 202, 74);">$params = {'grayscale' => true};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'grayscale' => true );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Colorize</span>
-<span style="color: rgb(74, 202, 74);">$params = {'color' => '#ff0000'};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'color' => '#ff0000' );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Negate</span>
-<span style="color: rgb(74, 202, 74);">$params = {'negate' => true};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);
+<span style="color: rgb(74, 202, 74);">$params = array( 'negate' => true );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
 <span style='color: gray'>// Multiple parameters</span>
-<span style="color: rgb(74, 202, 74);">$params = {'width' => 400, 'height' => 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000'};</span>
-bfi_thumb("http://mysite.com/myimage.jpg", $params);</pre>
+<span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400, 'height' => 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000' );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );</pre>
 
 <hr><br>
 <h2>Where are the images stored?</h2>
-<p>Processed images are stored in your WordPress instance's <strong>uploads</strong> directory. Images typically look like:</p>
-<p><code>wp-content/uploads/imagefilename-a6bo4u5enilq2h5wq8lc0.jpg</code></p>
+<p>Bfi_thumb stores previously created images in WP's default uploads directory in the subdirectory bfi_thumb, and uses those for future calls. The script automatically checks for updates on the original image then re-creates new images when needed. Any image can be used as long it is in your WordPress instance. Remote images are not supported due to security concerns.</p>
+<p><code>wp-content/uploads/bfi_thumb/imagefilename-a6bo4u5enilq2h5wq8lc0.jpg</code></p>
 <p>A hash is appended to the end of the filename, this hash represents the resize dimensions, filters applied to the image as well as the modified date of the source image. This means that correct processed image is always fetched for future <em>bfi_thumb</em> calls. An added benefit is that when the source image is updated, the hash changes, thus prompting the script to process it again.</p>
+<p></p>You can change the location of where the images are saved by defining this constant anywhere in your code:</p>
+<p><code>// Change the upload subdirectory to wp-content/uploads/other_dir
+@define( BFITHUMB_UPLOAD_DIR, 'other_dir' );</code></p>
 <hr><br>
 <h2>Author</h2>
 
