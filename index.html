@@ -147,8 +147,8 @@ bfi_thumb( "http://mysite.com/myimage.jpg", $params );</pre>
 <p><code>wp-content/uploads/bfi_thumb/imagefilename-a6bo4u5enilq2h5wq8lc0.jpg</code></p>
 <p>A hash is appended to the end of the filename, this hash represents the resize dimensions, filters applied to the image as well as the modified date of the source image. This means that correct processed image is always fetched for future <em>bfi_thumb</em> calls. An added benefit is that when the source image is updated, the hash changes, thus prompting the script to process it again.</p>
 <p></p>You can change the location of where the images are saved by defining this constant anywhere in your code:</p>
-<pre>// Change the upload subdirectory to wp-content/uploads/other_dir
-@define( BFITHUMB_UPLOAD_DIR, 'other_dir' );</pre>
+<pre><span style='color: gray'>// Change the upload subdirectory to wp-content/uploads/other_dir</span>
+<span style="color: rgb(74, 202, 74);">@define( BFITHUMB_UPLOAD_DIR, 'other_dir' );</span></pre>
 <hr><br>
 <h2>Author</h2>
 
