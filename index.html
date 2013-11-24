@@ -109,11 +109,13 @@ echo "&lt;img src='$image'/>";</pre>
 <span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400 );</span>
 bfi_thumb( "http://mysite.com/myimage.jpg", $params );
 
+<span style='color: gray'>// Resize by height only</span>
+<span style="color: rgb(74, 202, 74);">$params = array( 'height' => 300 );</span>
+bfi_thumb( "http://mysite.com/myimage.jpg", $params );
+
 <span style='color: gray'>// Resize by width and height</span>
 <span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400, 'height' => 300 );</span>
 bfi_thumb( "http://mysite.com/myimage.jpg", $params );
-
-<span style='color: gray'>// You can't resize by height alone</span>
 
 <span style='color: gray'>// Crop</span>
 <span style="color: rgb(74, 202, 74);">$params = array( 'width' => 400, 'height' => 300, 'crop' => true );</span>
