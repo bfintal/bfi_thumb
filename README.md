@@ -120,3 +120,5 @@ Social Stuff
 ============
 
 Twitter: [@bfintal](https://twitter.com/bfintal) & [@gambitph](https://twitter.com/gambitph)
+
+Google+: <a href='https://plus.google.com/113101541449927918834' rel='author'>+Benjamin Intal</a>
