@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer v1.2
+ * bfi_thumb - WP Image Resizer v1.2.1
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -35,7 +35,7 @@
 if ( !function_exists( 'bfi_thumb' ) ) {
 function bfi_thumb($url, $params = array(), $single = true) {
     $class = BFI_Class_Factory::getNewestVersion( 'BFI_Thumb' );
-    return $class::thumb( $url, $params, $single );
+    return call_user_func( array( $class, 'thumb' ), $url, $params, $single );
 }
 }
 
