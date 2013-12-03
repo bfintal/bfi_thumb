@@ -1,5 +1,5 @@
-bfi_thumb v1.2
-==============
+bfi_thumb v1.2.1
+================
 
 On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress
 
@@ -108,6 +108,12 @@ bfi_thumb( "URL-to-image.jpg", $params );
 ```
 
 <hr>
+
+Changelog
+=========
+
+v1.2.1
+* Fixed T_PAAMAYIM_NEKUDOTAYIM error in PHP 5.2.x
 
 License
 =======
