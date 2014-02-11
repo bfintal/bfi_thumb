@@ -32,6 +32,9 @@
  * @param $single boolean, if false then an array of data will be returned
  * @return string|array containing the url of the resized modofied image
  */
+
+if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
+
 if ( !function_exists( 'bfi_thumb' ) ) {
 function bfi_thumb($url, $params = array(), $single = true) {
     $class = BFI_Class_Factory::getNewestVersion( 'BFI_Thumb' );
