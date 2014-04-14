@@ -394,7 +394,11 @@ class BFI_Thumb_1_2 {
      *          'grayscale' bool
      *          'crop' bool
 	 *          'negate' bool
-	 *          'resize' bool
+     *          'crop_only' bool
+     *          'crop_x' bool string
+     *          'crop_y' bool string
+     *          'crop_width' bool string
+     *          'crop_height' bool string
      * @param $single boolean, if false then an array of data will be returned
      * @return string|array
      */
@@ -506,6 +510,18 @@ class BFI_Thumb_1_2 {
                 $dst_h = $height;
             } else {
                 $dst_h = $src_h;
+            }
+
+            // allow percentages
+            if (isset($dst_w)) {
+                if (stripos($dst_w, '%') !== false) {
+                    $dst_w = (int)((float)str_replace('%', '', $dst_w) / 100 * $orig_w);
+                }
+            }
+            if (isset($dst_h)) {
+                if (stripos($dst_h, '%') !== false) {
+                    $dst_h = (int)((float)str_replace('%', '', $dst_h) / 100 * $orig_h);
+                }
             }
 
             // Make the pos x and pos y work with percentages
@@ -687,29 +703,29 @@ class BFI_Thumb_1_2 {
 // Crop is always applied (just like timthumb)
 add_filter('image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5);
 if ( !function_exists( 'bfi_image_resize_dimensions' ) ) {
-	function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false) {
-		$aspect_ratio = $orig_w / $orig_h;
+function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false) {
+    $aspect_ratio = $orig_w / $orig_h;
 
-		$new_w = $dest_w;
-		$new_h = $dest_h;
+    $new_w = $dest_w;
+    $new_h = $dest_h;
 
-		if ( !$new_w ) {
-			$new_w = intval($new_h * $aspect_ratio);
-		}
+    if ( !$new_w ) {
+        $new_w = intval($new_h * $aspect_ratio);
+    }
 
-		if ( !$new_h ) {
-			$new_h = intval($new_w / $aspect_ratio);
-		}
+    if ( !$new_h ) {
+        $new_h = intval($new_w / $aspect_ratio);
+    }
 
-		$size_ratio = max($new_w / $orig_w, $new_h / $orig_h);
+    $size_ratio = max($new_w / $orig_w, $new_h / $orig_h);
 
-		$crop_w = round($new_w / $size_ratio);
-		$crop_h = round($new_h / $size_ratio);
-		$s_x = floor( ($orig_w - $crop_w) / 2 );
-		$s_y = floor( ($orig_h - $crop_h) / 2 );
+    $crop_w = round($new_w / $size_ratio);
+    $crop_h = round($new_h / $size_ratio);
+    $s_x = floor( ($orig_w - $crop_w) / 2 );
+    $s_y = floor( ($orig_h - $crop_h) / 2 );
 
-		// the return array matches the parameters to imagecopyresampled()
-		// int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
-		return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
-	}
+    // the return array matches the parameters to imagecopyresampled()
+    // int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
+    return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
+}
 }
