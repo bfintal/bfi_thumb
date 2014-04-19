@@ -502,14 +502,14 @@ class BFI_Thumb_1_2 {
             if(isset($crop_width) && isset($width)) {
                 $dst_w = $width;
             } else {
-                $dst_w = $src_w;
+                $dst_w = null;
             }
 
             // set the height resize with the crop
             if(isset($crop_height) && isset($height)) {
                 $dst_h = $height;
             } else {
-                $dst_h = $src_h;
+                $dst_h = null;
             }
 
             // allow percentages
@@ -523,6 +523,10 @@ class BFI_Thumb_1_2 {
                     $dst_h = (int)((float)str_replace('%', '', $dst_h) / 100 * $orig_h);
                 }
             }
+
+            $dims = image_resize_dimensions($src_w, $src_h, $dst_w, $dst_h, false);
+            $dst_w = $dims[4];
+            $dst_h = $dims[5];
 
             // Make the pos x and pos y work with percentages
             if (stripos($src_x, '%') !== false) {
@@ -552,12 +556,12 @@ class BFI_Thumb_1_2 {
             (isset($crop) ? ($crop ? '1' : '0') : '0') .
             (isset($negate) ? ($negate ? '1' : '0') : '0') .
             (isset($crop_only) ? ($crop_only ? '1' : '0') : '0') .
-            (isset($src_x) ? ($src_x ? '1' : '0') : '0') .
-            (isset($src_y) ? ($src_y ? '1' : '0') : '0') .
-            (isset($src_w) ? ($src_w ? '1' : '0') : '0') .
-            (isset($src_h) ? ($src_h ? '1' : '0') : '0') .
-            (isset($dst_w) ? ($dst_w ? '1' : '0') : '0') .
-            (isset($dst_h) ? ($dst_h ? '1' : '0') : '0');
+            (isset($src_x) ? str_pad((string)$src_x, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_y) ? str_pad((string)$src_y, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_w) ? str_pad((string)$src_w, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_h) ? str_pad((string)$src_h, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($dst_w) ? str_pad((string)$dst_w, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($dst_h) ? str_pad((string)$dst_h, 5, '0', STR_PAD_LEFT) : '00000');
         $suffix = self::base_convert_arbitrary($suffix, 10, 36);
 
         // use this to check if cropped image already exists, so we can return that instead
@@ -588,7 +592,7 @@ class BFI_Thumb_1_2 {
         $img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
 
         // if file exists, just return it
-        if (@file_exists($destfilename) && getimagesize($destfilename) && !(isset($force) && $force === true)) {
+        if (@file_exists($destfilename) && getimagesize($destfilename)) {
         } else {
             // perform resizing and other filters
             $editor = wp_get_image_editor($img_path);
