@@ -1,7 +1,9 @@
-bfi_thumb v1.2.1
-================
+bfi_thumb v1.3
+==============
 
 On the fly image resizer / cropper / grayscaler / colorizer / opacitor :) for WordPress
+
+**Update: BFI Thumb now integrates into the core WordPress image functions, you actually don't have to call `bfi_thumb` to use it!**
 
 *You can read the tutorial and get more information about BFI_Thumb from this article: [Moving Away From TimThumb to BFIThumb](http://wp.tutsplus.com/tutorials/theme-development/moving-away-from-timthumb-to-bfithumb/)*
 
@@ -53,8 +55,40 @@ Aqua Resizer is awesome, WP's Image Editor is awesome, Timthumb is awesome.
 When WP reached 3.5 and introduced the Image Editor class, as a theme author I couldn't anymore use Timthumb in my WP themes. An alternative was to use Aqua Resizer instead. Although it did the job quite well, I needed some of the functionalities supported by Timthumb.. I needed to be allowed to grayscale, color tint images and change the opacity of images all while resizing them. I couldn't find anything that did everything I wanted, so I made BFI_Thumb.
 
 
-Usage
-=====
+Usage (New Method)
+==================
+
+***Use this if your image can be accessed by WP functions such as `the_post_thumbnail`***
+
+1. Include / require BFI_Thumb.php into your WordPress files.
+
+```php
+require_once('BFI_Thumb.php');
+```
+
+2. Call your normal WordPress image functions, specify an array as the `$size` of your image, then add a parameter `'bfi_thumb' => true` to it.
+
+```php
+// Getting the featured image without bfi_thumb
+the_post_thumbnail( array( 1024, 400 ) );
+
+// With bfi_thumb
+the_post_thumbnail( array( 1024, 400, 'bfi_thumb' => true ) );
+
+// With bfi_thumb & with parameters
+the_post_thumbnail( array( 1024, 400, 'bfi_thumb' => true, 'grayscale' => true ) );
+
+// Getting an attachment image with bfi_thumb & multiple parameters
+$params = array( 400, 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000' );
+wp_get_attachment_image_src( $attachment_id, $size )
+```
+
+***This method can be used also in other WordPress image functions that accept a `$size` parameter.***
+
+Usage (Old Method that still has it's uses)
+===========================================
+
+***Use this if your image cannot be accessed by WP functions such as `the_post_thumbnail`***
 
 1. Include / require BFI_Thumb.php into your WordPress files.
 
@@ -68,7 +102,7 @@ require_once('BFI_Thumb.php');
 $params = array( 'width' => 400 );
 echo "<img src='" . bfi_thumb( "URL-to-image.jpg", $params ) . "'/>";
 ```
-    
+
 **$params is an associative array containing the actions to perform on your image.**
 
 Examples:
@@ -111,6 +145,9 @@ bfi_thumb( "URL-to-image.jpg", $params );
 
 Changelog
 =========
+
+v1.3
+* Now integrates in WordPress image functions
 
 v1.2.1
 * Fixed T_PAAMAYIM_NEKUDOTAYIM error in PHP 5.2.x

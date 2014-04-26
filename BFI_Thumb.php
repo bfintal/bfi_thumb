@@ -1,6 +1,6 @@
 <?php
 /*
- * bfi_thumb - WP Image Resizer v1.2.1
+ * bfi_thumb - WP Image Resizer v1.3
  *
  * (c) 2013 Benjamin F. Intal / Gambit
  *
@@ -125,10 +125,10 @@ function bfi_wp_image_editor_check_notice() {
 /*
  * Enhanced Imagemagick Image Editor
  */
-if ( !class_exists( 'BFI_Image_Editor_Imagick_1_2' ) ) {
-BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_Imagick', 'BFI_Image_Editor_Imagick_1_2', '1.2' );
+if ( !class_exists( 'BFI_Image_Editor_Imagick_1_3' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_Imagick', 'BFI_Image_Editor_Imagick_1_3', '1.3' );
 
-class BFI_Image_Editor_Imagick_1_2 extends WP_Image_Editor_Imagick {
+class BFI_Image_Editor_Imagick_1_3 extends WP_Image_Editor_Imagick {
 
     /** Changes the opacity of the image
      *
@@ -203,10 +203,10 @@ class BFI_Image_Editor_Imagick_1_2 extends WP_Image_Editor_Imagick {
 /*
  * Enhanced GD Image Editor
  */
-if ( !class_exists( 'BFI_Image_Editor_GD_1_2' ) ) {
-BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_GD', 'BFI_Image_Editor_GD_1_2', '1.2' );
+if ( !class_exists( 'BFI_Image_Editor_GD_1_3' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Image_Editor_GD', 'BFI_Image_Editor_GD_1_3', '1.3' );
 
-class BFI_Image_Editor_GD_1_2 extends WP_Image_Editor_GD {
+class BFI_Image_Editor_GD_1_3 extends WP_Image_Editor_GD {
     /** Rotates current image counter-clockwise by $angle.
      * Ported from image-edit.php
      * Added presevation of alpha channels
@@ -373,10 +373,10 @@ class BFI_Image_Editor_GD_1_2 extends WP_Image_Editor_GD {
 /*
  * Main Class
  */
-if ( !class_exists( 'BFI_Thumb_1_2' ) ) {
-BFI_Class_Factory::addClassVersion( 'BFI_Thumb', 'BFI_Thumb_1_2', '1.2' );
+if ( !class_exists( 'BFI_Thumb_1_3' ) ) {
+BFI_Class_Factory::addClassVersion( 'BFI_Thumb', 'BFI_Thumb_1_3', '1.3' );
 
-class BFI_Thumb_1_2 {
+class BFI_Thumb_1_3 {
     /** Uses WP's Image Editor Class to resize and filter images
      * Inspired by: https://github.com/sy4mil/Aqua-Resizer/blob/master/aq_resizer.php
      *
@@ -625,5 +625,39 @@ function bfi_image_resize_dimensions($payload, $orig_w, $orig_h, $dest_w, $dest_
     // the return array matches the parameters to imagecopyresampled()
     // int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
     return array( 0, 0, (int) $s_x, (int) $s_y, (int) $new_w, (int) $new_h, (int) $crop_w, (int) $crop_h );
+}
+}
+
+
+// This function allows us to latch on WP image functions such as
+// the_post_thumbnail, get_image_tag and wp_get_attachment_image_src
+// so that you won't have to use the function bfi_thumb in order to do resizing.
+// To make this work, in the WP image functions, when specifying an
+// array for the image dimensions, add a 'bfi_thumb' => true to
+// the array, then add your normal $params arguments.
+//
+// e.g. the_post_thumbnail( array( 1024, 400, 'bfi_thumb' => true, 'grayscale' => true ) );
+add_filter( 'image_downsize', 'bfi_image_downsize', 1, 3 );
+if ( !function_exists( 'bfi_image_downsize' ) ) {
+function bfi_image_downsize( $out, $id, $size ) {
+    if ( ! is_array( $size ) ) {
+        return false;
+    }
+    if ( ! array_key_exists( 'bfi_thumb', $size ) ) {
+        return false;
+    }
+    if ( empty( $size['bfi_thumb'] ) ) {
+        return false;
+    }
+
+    $img_url = wp_get_attachment_url( $id );
+
+    $params = $size;
+    $params['width'] = $size[0];
+    $params['height'] = $size[1];
+
+    $resized_img_url = bfi_thumb( $img_url, $params );
+
+    return array( $resized_img_url, $size[0], $size[1], false );
 }
 }
