@@ -589,6 +589,9 @@ class BFI_Thumb_1_3 {
 
         // desination paths and urls
         $destfilename = "{$upload_dir}/{$dst_rel_path}-{$suffix}.{$ext}";
+
+		// The urls generated have lower case extensions regardless of the original case
+		$ext = strtolower( $ext );
         $img_url = "{$upload_url}/{$dst_rel_path}-{$suffix}.{$ext}";
 
         // if file exists, just return it
