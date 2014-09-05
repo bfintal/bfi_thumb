@@ -80,7 +80,7 @@ the_post_thumbnail( array( 1024, 400, 'bfi_thumb' => true ) );
 the_post_thumbnail( array( 1024, 400, 'bfi_thumb' => true, 'grayscale' => true ) );
 
 // Getting an attachment image with bfi_thumb & multiple parameters
-$params = array( 400, 300, 'opacity' => 50, 'grayscale' => true, 'colorize' => '#ff0000' );
+$size = array( 400, 300, 'opacity' => 50, 'grayscale' => true, 'bfi_thumb' => true );
 wp_get_attachment_image_src( $attachment_id, $size )
 ```
 
