@@ -34,6 +34,7 @@
  *          'crop_y' bool string
  *          'crop_width' bool string
  *          'crop_height' bool string
+ *			'quality' int 1-100
  * @param $single boolean, if false then an array of data will be returned
  * @return string|array containing the url of the resized modified image
  */
@@ -445,6 +446,7 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 	     *          'crop_y' bool string
 	     *          'crop_width' bool string
 	     *          'crop_height' bool string
+		 *			'quality' int 1-100
 	     * @param $single boolean, if false then an array of data will be returned
 	     * @return string|array
 	     */
@@ -608,7 +610,8 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 	            ( isset( $src_w ) ? str_pad( (string) $src_w, 5, '0', STR_PAD_LEFT ) : '00000' ) .
 	            ( isset( $src_h ) ? str_pad( (string) $src_h, 5, '0', STR_PAD_LEFT ) : '00000' ) .
 	            ( isset( $dst_w ) ? str_pad( (string) $dst_w, 5, '0', STR_PAD_LEFT ) : '00000' ) .
-	            ( isset( $dst_h ) ? str_pad( (string) $dst_h, 5, '0', STR_PAD_LEFT ) : '00000' );
+	            ( isset( $dst_h ) ? str_pad( (string) $dst_h, 5, '0', STR_PAD_LEFT ) : '00000' ) .
+				( isset ( $quality ) && $quality > 0 && $quality <= 100 ) ? ( $quality ? (string) $quality : '0' ) : '0';
 	        $suffix = self::base_convert_arbitrary( $suffix, 10, 36 );
 
 	        // use this to check if cropped image already exists, so we can return that instead
@@ -691,6 +694,11 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 	                    return false;
 	                }
 	            }
+
+				// set the image quality (1-100) to save this image at
+				if ( $quality > 0 && $quality <= 100 && $ext != 'png' ) {
+					$editor->set_quality( $quality );
+				}
 
 	            // save our new image
 	            $mime_type = isset( $opacity ) ? 'image/png' : null;

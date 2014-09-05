@@ -15,6 +15,7 @@ Bfi_thumb resizes image on the fly using WordPress' Image Editor classes, thus s
 * Opacity
 * Negate
 * Resize images down or UP
+* Image Quality (1-100)
 
 The code was inspired by the awesome [Aqua Resizer](https://github.com/sy4mil/Aqua-Resizer/blob/master/aq_resizer.php)
 
