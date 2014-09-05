@@ -29,8 +29,13 @@
  *          'grayscale' bool
  *          'negate' bool
  *          'crop' bool
+ *          'crop_only' bool
+ *          'crop_x' bool string
+ *          'crop_y' bool string
+ *          'crop_width' bool string
+ *          'crop_height' bool string
  * @param $single boolean, if false then an array of data will be returned
- * @return string|array containing the url of the resized modofied image
+ * @return string|array containing the url of the resized modified image
  */
 
 if ( ! defined( 'ABSPATH' ) ) exit; // Exit if accessed directly
@@ -388,7 +393,12 @@ class BFI_Thumb_1_3 {
      *          'color' string hex-color #000000-#ffffff
      *          'grayscale' bool
      *          'crop' bool
-     *          'negate' bool
+	 *          'negate' bool
+     *          'crop_only' bool
+     *          'crop_x' bool string
+     *          'crop_y' bool string
+     *          'crop_width' bool string
+     *          'crop_height' bool string
      * @param $single boolean, if false then an array of data will be returned
      * @return string|array
      */
@@ -396,7 +406,11 @@ class BFI_Thumb_1_3 {
         extract($params);
 
         //validate inputs
-        if(!$url) return false;
+        if(!$url) {
+            return false;
+        }
+
+        $crop_only = isset($crop_only) ? $crop_only : false;
 
         //define upload path & dir
         $upload_info = wp_upload_dir();
@@ -418,10 +432,14 @@ class BFI_Thumb_1_3 {
         }
 
         // Fail if we can't find the image in our WP local directory
-        if ( empty( $img_path ) ) return $url;
+        if ( empty( $img_path ) ) {
+            return $url;
+        }
 
         //check if img path exists, and is an image indeed
-        if( !@file_exists($img_path) OR !getimagesize($img_path) ) return $url;
+        if( !@file_exists($img_path) || !getimagesize($img_path) ) {
+            return $url;
+        }
 
         // This is the filename
         $basename = basename($img_path);
@@ -444,14 +462,87 @@ class BFI_Thumb_1_3 {
             }
         }
 
-        // The only purpose of this is to detemine the final width and height
+        // The only purpose of this is to determine the final width and height
         // without performing any actual image manipulation, which will be used
         // to check whether a resize was previously done.
-        if (isset($width)) {
+        if (isset($width) && $crop_only === false) {
             //get image size after cropping
             $dims = image_resize_dimensions($orig_w, $orig_h, $width, isset($height) ? $height : null, isset($crop) ? $crop : false);
             $dst_w = $dims[4];
             $dst_h = $dims[5];
+        } else if($crop_only === true) {
+            // we don't want a resize,
+            // but only a crop in the image
+
+            // get x position to start croping
+            $src_x = (isset($crop_x)) ? $crop_x : 0;
+
+            // get y position to start croping
+            $src_y = (isset($crop_y)) ? $crop_y : 0;
+
+            // width of the crop
+            if(isset($crop_width)) {
+                $src_w = $crop_width;
+            } else if(isset($width)) {
+                $src_w = $width;
+            } else {
+                $src_w = $orig_w;
+            }
+
+            // height of the crop
+            if(isset($crop_height)) {
+                $src_h = $crop_height;
+            } else if(isset($height)) {
+                $src_h = $height;
+            } else {
+                $src_h = $orig_h;
+            }
+
+            // set the width resize with the crop
+            if(isset($crop_width) && isset($width)) {
+                $dst_w = $width;
+            } else {
+                $dst_w = null;
+            }
+
+            // set the height resize with the crop
+            if(isset($crop_height) && isset($height)) {
+                $dst_h = $height;
+            } else {
+                $dst_h = null;
+            }
+
+            // allow percentages
+            if (isset($dst_w)) {
+                if (stripos($dst_w, '%') !== false) {
+                    $dst_w = (int)((float)str_replace('%', '', $dst_w) / 100 * $orig_w);
+                }
+            }
+            if (isset($dst_h)) {
+                if (stripos($dst_h, '%') !== false) {
+                    $dst_h = (int)((float)str_replace('%', '', $dst_h) / 100 * $orig_h);
+                }
+            }
+
+            $dims = image_resize_dimensions($src_w, $src_h, $dst_w, $dst_h, false);
+            $dst_w = $dims[4];
+            $dst_h = $dims[5];
+
+            // Make the pos x and pos y work with percentages
+            if (stripos($src_x, '%') !== false) {
+                $src_x = (int)((float)str_replace('%', '', $width) / 100 * $orig_w);
+            }
+            if (stripos($src_y, '%') !== false) {
+                $src_y = (int)((float)str_replace('%', '', $height) / 100 * $orig_h);
+            }
+
+            // allow center to position crop start
+            if($src_x === 'center') {
+                $src_x = ($orig_w - $src_w) / 2;
+            }
+            if($src_y === 'center') {
+                $src_y = ($orig_h - $src_h) / 2;
+            }
         }
 
         // create the suffix for the saved file
@@ -463,14 +554,23 @@ class BFI_Thumb_1_3 {
             (isset($color) ? str_pad(preg_replace('#^\##', '', $color), 8, '0', STR_PAD_LEFT) : '00000000') .
             (isset($grayscale) ? ($grayscale ? '1' : '0') : '0') .
             (isset($crop) ? ($crop ? '1' : '0') : '0') .
-            (isset($negate) ? ($negate ? '1' : '0') : '0');
+            (isset($negate) ? ($negate ? '1' : '0') : '0') .
+            (isset($crop_only) ? ($crop_only ? '1' : '0') : '0') .
+            (isset($src_x) ? str_pad((string)$src_x, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_y) ? str_pad((string)$src_y, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_w) ? str_pad((string)$src_w, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($src_h) ? str_pad((string)$src_h, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($dst_w) ? str_pad((string)$dst_w, 5, '0', STR_PAD_LEFT) : '00000') .
+            (isset($dst_h) ? str_pad((string)$dst_h, 5, '0', STR_PAD_LEFT) : '00000');
         $suffix = self::base_convert_arbitrary($suffix, 10, 36);
 
         // use this to check if cropped image already exists, so we can return that instead
         $dst_rel_path = str_replace( '.'.$ext, '', basename($img_path));
 
         // If opacity is set, change the image type to png
-        if (isset($opacity)) $ext = 'png';
+        if (isset($opacity)) {
+            $ext = 'png';
+        }
 
 
         // Create the upload subdirectory, this is where
@@ -502,8 +602,14 @@ class BFI_Thumb_1_3 {
             /*
              * Perform image manipulations
              */
-            if ( ( isset( $width ) && $width ) || ( isset( $height ) && $height ) ) {
-                if ( is_wp_error( $editor->resize( isset( $width ) ? $width : null, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
+            if($crop_only === false) {
+                if ( ( isset( $width ) && $width ) || ( isset( $height ) && $height ) ) {
+                    if ( is_wp_error( $editor->resize( isset( $width ) ? $width : null, isset( $height ) ? $height : null, isset( $crop ) ? $crop : false ) ) ) {
+                        return false;
+                    }
+                }
+            } else {
+                if ( is_wp_error( $editor->crop($src_x, $src_y, $src_w, $src_h, $dst_w, $dst_h) ) ) {
                     return false;
                 }
             }
