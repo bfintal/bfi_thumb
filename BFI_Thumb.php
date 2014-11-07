@@ -770,7 +770,10 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 // don't use the default resizer since we want to allow resizing to larger sizes (than the original one)
 // Parts are copied from media.php
 // Crop is always applied (just like timthumb)
-add_filter( 'image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5 );
+// Don't use this inside the admin since sometimes images in the media library get resized
+if ( ! is_admin() ) {
+	add_filter( 'image_resize_dimensions', 'bfi_image_resize_dimensions', 10, 5 );
+}
 
 if ( ! function_exists( 'bfi_image_resize_dimensions' ) ) {
 	function bfi_image_resize_dimensions( $payload, $orig_w, $orig_h, $dest_w, $dest_h, $crop = false ) {
