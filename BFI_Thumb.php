@@ -696,7 +696,7 @@ if ( ! class_exists( 'BFI_Thumb_1_3' ) ) {
 	            }
 
 				// set the image quality (1-100) to save this image at
-				if ( $quality > 0 && $quality <= 100 && $ext != 'png' ) {
+				if ( isset($quality) && $quality > 0 && $quality <= 100 && $ext != 'png' ) {
 					$editor->set_quality( $quality );
 				}
 
