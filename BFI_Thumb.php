@@ -782,11 +782,11 @@ if ( ! function_exists( 'bfi_image_resize_dimensions' ) ) {
 	    $new_w = $dest_w;
 	    $new_h = $dest_h;
 
-	    if ( ! $new_w ) {
+	    if ( empty( $new_w ) || $new_w < 0  ) {
 	        $new_w = intval( $new_h * $aspect_ratio );
 	    }
 
-	    if ( ! $new_h ) {
+	    if ( empty( $new_h ) || $new_h < 0 ) {
 	        $new_h = intval( $new_w / $aspect_ratio );
 	    }
 
@@ -796,6 +796,11 @@ if ( ! function_exists( 'bfi_image_resize_dimensions' ) ) {
 	    $crop_h = round( $new_h / $size_ratio );
 	    $s_x = floor( ( $orig_w - $crop_w ) / 2 );
 	    $s_y = floor( ( $orig_h - $crop_h ) / 2 );
+		
+		// Safe guard against super large or zero images which might cause 500 errors
+		if ( $new_w > 5000 || $new_h > 5000 || $new_w <= 0 || $new_h <= 0 ) {
+			return null;
+		}
 
 	    // the return array matches the parameters to imagecopyresampled()
 	    // int dst_x, int dst_y, int src_x, int src_y, int dst_w, int dst_h, int src_w, int src_h
