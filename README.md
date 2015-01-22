@@ -1,3 +1,9 @@
+# Important Notice: Please use [OTF Regenerate Thumbnails](https://github.com/gambitph/WP-OTF-Regenerate-Thumbnails) (aka bfi_thumb2) instead of bfi_thumb
+
+*This repo is no longer being maintained.*
+
+***Why? Although it has some nifty features (e.g. grayscale), those features are practically seldomly used, and those would most likely be replaced with CSS in the future anyway. It's simply better to have a solid on the fly image resizer that works without any special function calls or special array key-value pairs. So, we decided to ditch the original bfi_thumb script and instead rewrite it into a leaner and meaner [OTF Regenerate Thumbnails](https://github.com/gambitph/WP-OTF-Regenerate-Thumbnails).***
+
 bfi_thumb v1.3
 ==============
 
